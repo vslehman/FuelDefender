@@ -48,7 +48,7 @@ public class Milestone2 extends Activity {
 		
 		// Set up accelerometer
 		mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
-	    mSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+	    mSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_LINEAR_ACCELERATION);
 	    
 	    // Setup buttons
 	    Button stopButton = (Button)findViewById(R.id.stop_button);
@@ -275,7 +275,7 @@ public class Milestone2 extends Activity {
 		{
 			//BufferedWriter for performance, true to set append to file flag
 			BufferedWriter buf = new BufferedWriter(new FileWriter(logFile, true)); 
-			buf.append(String.format("%d %.3f %.3f %.3f", timestamp, xAccel, yAccel, zAccel));
+			buf.append(String.format("%d %.3f %.3f %.3f %n", timestamp, xAccel, yAccel, zAccel));
 			buf.newLine();
 			buf.close();
 		}
