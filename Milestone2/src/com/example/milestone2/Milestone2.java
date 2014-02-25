@@ -32,8 +32,8 @@ public class Milestone2 extends Activity {
 	private SensorEventListener stoplightListener;
 	private SensorEventListener parkingListener;
 	
-	private final String parkingFilename = "sdcard/parking_log.txt";
-	private final String stoplightFilename = "sdcard/stoplight_log.txt";
+	private final String parkingFilename = "sdcard/os_logs/parking_log.txt";
+	private final String stoplightFilename = "sdcard/os_logs/stoplight_log.txt";
 	
 	private final long LOG_TIME = 10;	// In seconds
 	
@@ -275,7 +275,7 @@ public class Milestone2 extends Activity {
 		{
 			//BufferedWriter for performance, true to set append to file flag
 			BufferedWriter buf = new BufferedWriter(new FileWriter(logFile, true)); 
-			buf.append(String.format("%d %.3f %.3f %.3f %n", timestamp, xAccel, yAccel, zAccel));
+			buf.append(String.format("%d %.3f %.3f %.3f", timestamp, xAccel, yAccel, zAccel));
 			buf.newLine();
 			buf.close();
 		}
