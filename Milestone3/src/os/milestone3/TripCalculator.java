@@ -23,17 +23,52 @@ import org.json.JSONObject;
 
 import android.location.Location;
 import android.os.Bundle;
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.support.v4.app.FragmentActivity;
 import android.view.Menu;
+import android.widget.TextView;
+
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.MapFragment;
 
 public class TripCalculator extends FragmentActivity {
+	
+	private GoogleMap map;
+	private Location lot;
 
+	private Location gym;
+
+	@SuppressLint("NewApi")
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
+		
+		// Get map handle
+		map = ((SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map)).getMap();
+		
+		// Move camera to position
+		map.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(35.125395, -89.937043), 15));
+		
+		// Create locations
+		lot = new Location("Thin air");
+		lot.setLatitude(35.125395);
+		lot.setLongitude(-89.937043);
+
+		gym = new Location("The keyboard");
+		gym.setLatitude(35.114092);
+		gym.setLongitude(-89.938277);
+		
+		// Add markers
+		map.addMarker(new MarkerOptions().position(new LatLng(lot.getLatitude(), lot.getLongitude())).title("Central Parking Lot"));
+		map.addMarker(new MarkerOptions().position(new LatLng(gym.getLatitude(), gym.getLongitude())).title("Memphis CRIS"));
+		
+		// Get travel time
 		getTripDistance();
 	}
 
@@ -50,29 +85,30 @@ public class TripCalculator extends FragmentActivity {
 	 */
 	public void getTripDistance() {
 		
-		Location lot = new Location("Thin air");
-		lot.setLatitude(35.125395);
-		lot.setLongitude(-89.937043);
-
-		Location gym = new Location("The keyboard");
-		gym.setLatitude(35.114092);
-		gym.setLongitude(-89.938277);
+		String driveResponse = getGoogleMapsDistanceMatrix(lot, gym, "driving");
+		String driveTime = getDurationFromJsonResponse(driveResponse);
 		
-		String response = getGoogleMapsDistanceMatrix(lot, gym);
-		System.out.println("Duration: " + getDurationFromJsonResponse(response));
+		TextView driveView = (TextView)findViewById(R.id.driveTimeValue);
+		driveView.setText(driveTime);
+		
+		String walkResponse = getGoogleMapsDistanceMatrix(lot, gym, "walking");
+		String walkTime = getDurationFromJsonResponse(walkResponse);
+		
+		TextView walkView = (TextView)findViewById(R.id.walkTimeValue);
+		walkView.setText(walkTime);
 	}
 	
 	/**========================================================================
 	 * public String getGoogleMapsDistanceMatrix()
 	 * ------------------------------------------------------------------------
 	 */
-	public String getGoogleMapsDistanceMatrix(Location origin, Location destination) {
+	public String getGoogleMapsDistanceMatrix(Location origin, Location destination, String mode) {
 		try {
 			String originCoords = "origins=" + origin.getLatitude() + "," + origin.getLongitude();
 			String destinationCoords = "destinations=" + destination.getLatitude() + "," + destination.getLongitude();
 			
 			String apiCall = "http://maps.googleapis.com/maps/api/distancematrix/json?";
-			apiCall += originCoords + "&" + destinationCoords +"&mode=walking&sensor=true&units=imperial";
+			apiCall += originCoords + "&" + destinationCoords +"&mode=" + mode + "&sensor=true&units=imperial";
 			System.out.println(apiCall);
 			URI url = new URI(apiCall);
 		
