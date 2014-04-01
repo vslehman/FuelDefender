@@ -36,6 +36,10 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.MapFragment;
 
+/******************************************************************************
+* public class TripCalulator
+*------------------------------------------------------------------------------
+*/
 public class TripCalculator extends FragmentActivity {
 	
 	private GoogleMap map;
@@ -84,75 +88,12 @@ public class TripCalculator extends FragmentActivity {
 	 * ------------------------------------------------------------------------
 	 */
 	public void getTripDistance() {
-		
-		String driveResponse = getGoogleMapsDistanceMatrix(lot, gym, "driving");
-		String driveTime = getDurationFromJsonResponse(driveResponse);
+		GoogleTripTime tripTime = new GoogleTripTime(lot, gym);
 		
 		TextView driveView = (TextView)findViewById(R.id.driveTimeValue);
-		driveView.setText(driveTime);
-		
-		String walkResponse = getGoogleMapsDistanceMatrix(lot, gym, "walking");
-		String walkTime = getDurationFromJsonResponse(walkResponse);
+		driveView.setText(tripTime.getDriveTimeText());
 		
 		TextView walkView = (TextView)findViewById(R.id.walkTimeValue);
-		walkView.setText(walkTime);
+		walkView.setText(tripTime.getWalkTimeText());
 	}
-	
-	/**========================================================================
-	 * public String getGoogleMapsDistanceMatrix()
-	 * ------------------------------------------------------------------------
-	 */
-	public String getGoogleMapsDistanceMatrix(Location origin, Location destination, String mode) {
-		try {
-			String originCoords = "origins=" + origin.getLatitude() + "," + origin.getLongitude();
-			String destinationCoords = "destinations=" + destination.getLatitude() + "," + destination.getLongitude();
-			
-			String apiCall = "http://maps.googleapis.com/maps/api/distancematrix/json?";
-			apiCall += originCoords + "&" + destinationCoords +"&mode=" + mode + "&sensor=true&units=imperial";
-			System.out.println(apiCall);
-			URI url = new URI(apiCall);
-		
-			HttpClient httpclient = new DefaultHttpClient();
-		    HttpResponse response = httpclient.execute(new HttpGet(url));
-		    StatusLine statusLine = response.getStatusLine();
-		    if(statusLine.getStatusCode() == HttpStatus.SC_OK){
-		        ByteArrayOutputStream out = new ByteArrayOutputStream();
-		        response.getEntity().writeTo(out);
-		        out.close();
-		        String responseString = out.toString();
-		        
-		        return responseString;
-
-		    } else{
-		        //Closes the connection.
-		        response.getEntity().getContent().close();
-		        throw new IOException(statusLine.getReasonPhrase());
-		    }
-		}
-		catch (Exception e) {
-			e.printStackTrace();
-			return "null";
-		}
-	}
-	
-	/**========================================================================
-	 * public String getDurationFromJsonResponse()
-	 * ------------------------------------------------------------------------
-	 */
-	public String getDurationFromJsonResponse(String response) {
-		
-		try {
-			JSONObject json = new JSONObject(response);
-	        JSONArray rows = json.getJSONArray("rows");
-	        JSONObject object = rows.getJSONObject(0);
-	        JSONArray elements = object.getJSONArray("elements");
-	        JSONObject obj2 = elements.getJSONObject(0);
-	        JSONObject duration = obj2.getJSONObject("duration");
-	        return duration.getString("text");
-		}
-		catch (JSONException e) {
-			return "null";
-		}
-	}
-
 }

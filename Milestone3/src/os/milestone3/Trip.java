@@ -4,26 +4,20 @@ import android.location.Location;
 
 
 public class Trip {
-	private Location begin;
-	private Location end;
+	private Location origin;
+	private Location destination;
 	
 	@SuppressLint("NewApi")
 	public long getElapsedTime() {
-		return (end.getElapsedRealtimeNanos() - begin.getElapsedRealtimeNanos());
+		return (destination.getElapsedRealtimeNanos() - origin.getElapsedRealtimeNanos());
 	}
 	
-	public Location getBegin() {
-		return begin;
+	public Location getOrigin() {
+		return origin;
 	}
-	public void setBegin(Location begin) {
-		this.begin = begin;
+
+	public Location getDestination() {
+		return destination;
 	}
-	public Location getEnd() {
-		return end;
-	}
-	public void setEnd(Location end) {
-		this.end = end;
-	}
-	
 	
 }
