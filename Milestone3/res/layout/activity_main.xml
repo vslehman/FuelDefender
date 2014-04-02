@@ -17,61 +17,69 @@
 	    android:layout_height="406dp"
 	    android:orientation="vertical" >
 
-		<TableRow
-		    android:id="@+id/tableRow1"
-		    android:layout_width="match_parent"
-		    android:layout_height="wrap_content" >
+	    <TableRow
+	        android:id="@+id/tableRow1"
+	        android:layout_width="match_parent"
+	        android:layout_height="wrap_content" >
+	    </TableRow>
 
-			<TextView
-			    android:id="@+id/textView1"
-			    android:layout_width="wrap_content"
-			    android:layout_height="wrap_content"
-			    android:text="Fuel Defender"
-			    android:textAppearance="?android:attr/textAppearanceLarge" />
+	    <TableRow
+	        android:id="@+id/tableRow2"
+	        android:layout_width="match_parent"
+	        android:layout_height="wrap_content"
+	        android:layout_marginLeft="8dp"
+	        android:layout_marginTop="8dp" >
 
-		</TableRow>
+	        <TextView
+	            android:id="@+id/driveTimeLabel"
+	            android:layout_width="wrap_content"
+	            android:layout_height="wrap_content"
+	            android:text="Drive time:  "
+	            android:textAppearance="?android:attr/textAppearanceLarge" />
 
-		<TableRow
-		    android:id="@+id/tableRow2"
-		    android:layout_width="match_parent"
-		    android:layout_height="wrap_content" >
+	        <TextView
+	            android:id="@+id/driveTimeValue"
+	            android:layout_width="wrap_content"
+	            android:layout_height="wrap_content"
+	            android:text="--"
+	            android:textAppearance="?android:attr/textAppearanceLarge" />
+	    </TableRow>
 
-			<TextView
-			    android:id="@+id/driveTimeLabel"
-			    android:layout_width="wrap_content"
-			    android:layout_height="wrap_content"
-			    android:text="Drive time:  "
-			    android:textAppearance="?android:attr/textAppearanceLarge" />
+	    <TableRow
+	        android:id="@+id/tableRow3"
+	        android:layout_width="match_parent"
+	        android:layout_height="wrap_content"
+	        android:layout_marginLeft="8dp" >
 
-			<TextView
-			    android:id="@+id/driveTimeValue"
-			    android:layout_width="wrap_content"
-			    android:layout_height="wrap_content"
-			    android:text="Large Text"
-			    android:textAppearance="?android:attr/textAppearanceLarge" />
+	        <TextView
+	            android:id="@+id/walkTimeLabel"
+	            android:layout_width="wrap_content"
+	            android:layout_height="wrap_content"
+	            android:text="Walk time:  "
+	            android:textAppearance="?android:attr/textAppearanceLarge" />
 
-		</TableRow>
+	        <TextView
+	            android:id="@+id/walkTimeValue"
+	            android:layout_width="wrap_content"
+	            android:layout_height="wrap_content"
+	            android:text="--"
+	            android:textAppearance="?android:attr/textAppearanceLarge" />
+	    </TableRow>
 
-		<TableRow
-		    android:id="@+id/tableRow3"
-		    android:layout_width="match_parent"
-		    android:layout_height="wrap_content" >
+	    <RelativeLayout
+	        android:layout_width="match_parent"
+	        android:layout_height="393dp" >
 
-			<TextView
-			    android:id="@+id/walkTimeLabel"
-			    android:layout_width="wrap_content"
-			    android:layout_height="wrap_content"
-			    android:text="Walk time:  "
-			    android:textAppearance="?android:attr/textAppearanceLarge" />
+	        <Button
+	            android:id="@+id/switch_to_record_trip"
+	            android:layout_width="wrap_content"
+	            android:layout_height="wrap_content"
+	            android:layout_alignParentBottom="true"
+	            android:layout_centerHorizontal="true"
+	            android:layout_marginBottom="47dp"
+	            android:text="Record Trip" />
 
-			<TextView
-			    android:id="@+id/walkTimeValue"
-			    android:layout_width="wrap_content"
-			    android:layout_height="wrap_content"
-			    android:text="Large Text"
-			    android:textAppearance="?android:attr/textAppearanceLarge" />
-
-		</TableRow>
+	    </RelativeLayout>
 
 	</LinearLayout>
 

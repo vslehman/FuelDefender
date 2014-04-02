@@ -3,6 +3,7 @@ package os.milestone3;
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -10,6 +11,7 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
+import java.util.ArrayList;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
@@ -25,8 +27,11 @@ import android.location.Location;
 import android.os.Bundle;
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.content.Intent;
 import android.support.v4.app.FragmentActivity;
 import android.view.Menu;
+import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -43,10 +48,11 @@ import com.google.android.gms.maps.MapFragment;
 public class TripCalculator extends FragmentActivity {
 	
 	private GoogleMap map;
-	private Location lot;
-
-	private Location gym;
-
+	
+	/**========================================================================
+	 * public void onCreate()
+	 * ------------------------------------------------------------------------
+	 */
 	@SuppressLint("NewApi")
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -56,26 +62,42 @@ public class TripCalculator extends FragmentActivity {
 		// Get map handle
 		map = ((SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map)).getMap();
 		
-		// Move camera to position
-		map.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(35.125395, -89.937043), 15));
-		
 		// Create locations
-		lot = new Location("Thin air");
-		lot.setLatitude(35.125395);
-		lot.setLongitude(-89.937043);
-
-		gym = new Location("The keyboard");
-		gym.setLatitude(35.114092);
-		gym.setLongitude(-89.938277);
+		ArrayList<Trip> trips = loadTrips();
 		
 		// Add markers
-		map.addMarker(new MarkerOptions().position(new LatLng(lot.getLatitude(), lot.getLongitude())).title("Central Parking Lot"));
-		map.addMarker(new MarkerOptions().position(new LatLng(gym.getLatitude(), gym.getLongitude())).title("Memphis CRIS"));
+		for (Trip t : trips) {
+			map.addMarker(new MarkerOptions().position(new LatLng(t.getOrigin().getLatitude(), t.getOrigin().getLongitude())).title("Origin"));
+			map.addMarker(new MarkerOptions().position(new LatLng(t.getDestination().getLatitude(), t.getDestination().getLongitude())).title("Destination"));
+		}
 		
-		// Get travel time
-		getTripDistance();
+		// Is there a trip to snap to
+		if (!trips.isEmpty()) {
+			
+			Trip trip = trips.get(0);
+			// Move camera to first trip's origin
+			map.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(trip.getOrigin().getLatitude(), trip.getOrigin().getLongitude()), 15));
+			
+			// Get travel time for first trip
+			getTripDistance(trip);
+		}
+		else {
+			// Default to UofM
+			map.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(35.125395, -89.937043), 15));
+		}
+		
+		final Button button = (Button) findViewById(R.id.switch_to_record_trip);
+        button.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+            	switchToRecordTrip();
+            }
+        });
 	}
-
+	
+	/**========================================================================
+	 * public boolean onCreateOptionsMenu()
+	 * ------------------------------------------------------------------------
+	 */
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
@@ -84,16 +106,61 @@ public class TripCalculator extends FragmentActivity {
 	}
 	
 	/**========================================================================
+	 * public void switchToRecordTrip()
+	 * ------------------------------------------------------------------------
+	 */
+	public void switchToRecordTrip() {
+		Intent myIntent = new Intent(this, TripMonitor.class);
+		startActivity(myIntent);
+	}
+	
+	/**========================================================================
 	 * public void getTripDistance()
 	 * ------------------------------------------------------------------------
 	 */
-	public void getTripDistance() {
-		GoogleTripTime tripTime = new GoogleTripTime(lot, gym);
+	public void getTripDistance(Trip trip) {
+		GoogleTripTime tripTime = new GoogleTripTime(trip.getOrigin(), trip.getDestination());
 		
 		TextView driveView = (TextView)findViewById(R.id.driveTimeValue);
 		driveView.setText(tripTime.getDriveTimeText());
 		
 		TextView walkView = (TextView)findViewById(R.id.walkTimeValue);
 		walkView.setText(tripTime.getWalkTimeText());
+	}
+	
+	/**========================================================================
+	 * private ArrayList<Trip> loadTrips()
+	 * ------------------------------------------------------------------------
+	 */
+	private ArrayList<Trip> loadTrips() {
+
+		ArrayList<Trip> trips = new ArrayList<Trip>();
+
+		try {
+			BufferedReader in = new BufferedReader(new FileReader(TripMonitor.getTripLog()));
+			String line = in.readLine();
+			while (line  != null) {
+
+				String[] tokens = line.split(" ");
+
+				Location origin = new Location("File");
+				origin.setLatitude(Double.parseDouble(tokens[0]));
+				origin.setLongitude(Double.parseDouble(tokens[1]));
+
+				Location destination = new Location("File");
+				destination.setLatitude(Double.parseDouble(tokens[2]));
+				destination.setLongitude(Double.parseDouble(tokens[3]));
+
+				trips.add(new Trip(origin, destination));
+				
+				line = in.readLine();
+			}
+			in.close();
+		}
+		catch (IOException e){
+
+		}
+
+		return trips;
 	}
 }

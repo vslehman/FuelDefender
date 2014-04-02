@@ -100,7 +100,7 @@ public class GoogleTripTime {
 			
 			String apiCall = "http://maps.googleapis.com/maps/api/distancematrix/json?";
 			apiCall += originCoords + "&" + destinationCoords +"&mode=" + mode + "&sensor=true&units=imperial";
-			System.out.println(apiCall);
+
 			URI url = new URI(apiCall);
 		
 			HttpClient httpclient = new DefaultHttpClient();
