@@ -42,23 +42,29 @@ public class GoogleTripTime {
 		// Driving
 		String driveResponse = getGoogleMapsDistanceMatrix(origin, destination, TRANSPORT_MODE_DRIVE);
 		ResponsePair driveParsed = getDurationFromJsonResponse(driveResponse);
-
-		driveTime = driveParsed.value;
-		driveTimeText = driveParsed.text;
+		
+		if (driveParsed != null) {
+			driveTime = driveParsed.value;
+			driveTimeText = driveParsed.text;
+		}
 		
 		// Biking
 		String bikeResponse = getGoogleMapsDistanceMatrix(origin, destination, TRANSPORT_MODE_BIKE);
 		ResponsePair bikeParsed = getDurationFromJsonResponse(bikeResponse);
 		
-		bikeTime = bikeParsed.value;
-		bikeTimeText = bikeParsed.text;
+		if (bikeParsed != null) {
+			bikeTime = bikeParsed.value;
+			bikeTimeText = bikeParsed.text;
+		}
 		
 		// Walking
 		String walkResponse = getGoogleMapsDistanceMatrix(origin, destination, TRANSPORT_MODE_WALK);
 		ResponsePair walkParsed = getDurationFromJsonResponse(walkResponse);
 		
-		walkTime = walkParsed.value;
-		walkTimeText = walkParsed.text;
+		if (walkParsed != null) {
+			walkTime = walkParsed.value;
+			walkTimeText = walkParsed.text;
+		}
 	}
 	
 	/**========================================================================

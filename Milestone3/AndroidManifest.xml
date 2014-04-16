@@ -39,6 +39,12 @@
             </intent-filter>
         </activity>
         
+		<service
+			android:name=".AccelerationAlarm"
+			android:label="AccelerationAlarm"
+            android:enabled="true" >
+		</service>
+        
         <activity 
         	android:name=".TripMonitor" 
         	android:label="@string/app_name">

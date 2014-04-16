@@ -37,6 +37,7 @@ import android.widget.TextView;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.MapFragment;
@@ -59,6 +60,9 @@ public class TripCalculator extends FragmentActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 		
+		// Start acceleration alarm
+		startService(new Intent(this, AccelerationAlarm.class));
+		
 		// Get map handle
 		map = ((SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map)).getMap();
 		
@@ -67,13 +71,17 @@ public class TripCalculator extends FragmentActivity {
 		
 		// Add markers
 		for (Trip t : trips) {
-			map.addMarker(new MarkerOptions().position(new LatLng(t.getOrigin().getLatitude(), t.getOrigin().getLongitude())).title("Origin"));
-			map.addMarker(new MarkerOptions().position(new LatLng(t.getDestination().getLatitude(), t.getDestination().getLongitude())).title("Destination"));
+			map.addMarker(new MarkerOptions().position(new LatLng(t.getOrigin().getLatitude(), t.getOrigin().getLongitude()))
+					                         .title("Origin")
+					                         .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
+			
+			map.addMarker(new MarkerOptions().position(new LatLng(t.getDestination().getLatitude(), t.getDestination().getLongitude()))
+					                         .title("Destination")
+					                         .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED)));
 		}
 		
 		// Is there a trip to snap to
 		if (!trips.isEmpty()) {
-			
 			Trip trip = trips.get(0);
 			// Move camera to first trip's origin
 			map.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(trip.getOrigin().getLatitude(), trip.getOrigin().getLongitude()), 15));
@@ -119,6 +127,10 @@ public class TripCalculator extends FragmentActivity {
 	 * ------------------------------------------------------------------------
 	 */
 	public void getTripDistance(Trip trip) {
+		if (trip == null) {
+			return;
+		}
+		
 		GoogleTripTime tripTime = new GoogleTripTime(trip.getOrigin(), trip.getDestination());
 		
 		TextView driveView = (TextView)findViewById(R.id.driveTimeValue);
