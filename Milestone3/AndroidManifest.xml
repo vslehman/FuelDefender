@@ -44,6 +44,12 @@
 			android:label="AccelerationAlarm"
             android:enabled="true" >
 		</service>
+		
+		<service
+			android:name=".DrivingMonitor"
+			android:label="DrivingMonitor"
+            android:enabled="true" >
+		</service>
         
         <activity 
         	android:name=".TripMonitor" 

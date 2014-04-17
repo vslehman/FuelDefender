@@ -61,7 +61,7 @@ public class TripCalculator extends FragmentActivity {
 		setContentView(R.layout.activity_main);
 		
 		// Start acceleration alarm
-		startService(new Intent(this, AccelerationAlarm.class));
+		startService(new Intent(this, DrivingMonitor.class));
 		
 		// Get map handle
 		map = ((SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map)).getMap();
