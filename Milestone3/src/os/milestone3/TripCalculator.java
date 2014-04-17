@@ -60,29 +60,45 @@ public class TripCalculator extends FragmentActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 		
-		// Start acceleration alarm
-		startService(new Intent(this, DrivingMonitor.class));
-		
 		// Get map handle
 		map = ((SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map)).getMap();
 		
-		// Create locations
-		ArrayList<Trip> trips = loadTrips();
+		// Recover trip from passed data
+		Bundle extras = getIntent().getExtras();
 		
-		// Add markers
-		for (Trip t : trips) {
-			map.addMarker(new MarkerOptions().position(new LatLng(t.getOrigin().getLatitude(), t.getOrigin().getLongitude()))
-					                         .title("Origin")
-					                         .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
-			
-			map.addMarker(new MarkerOptions().position(new LatLng(t.getDestination().getLatitude(), t.getDestination().getLongitude()))
-					                         .title("Destination")
-					                         .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED)));
+		// If no trip data was passed, there's no reason to run the activity
+		if (extras == null) {
+			finish();
+			return;
 		}
 		
+		int id = extras.getInt("id");
+		double originLatitude = extras.getDouble("origin_latitude");
+		double originLongitude = extras.getDouble("origin_longitude");
+		double destinationLatitude = extras.getDouble("destination_latitude");
+		double destinationLongitude = extras.getDouble("destination_longitude");
+		
+		Location origin = new Location("Database");
+		origin.setLatitude(originLatitude);
+		origin.setLongitude(originLongitude);
+		
+		Location destination = new Location("Database");
+		destination.setLatitude(destinationLatitude);
+		destination.setLongitude(destinationLongitude);
+		
+		Trip trip = new Trip(origin, destination);
+		
+		// Add markers
+		map.addMarker(new MarkerOptions().position(new LatLng(trip.getOrigin().getLatitude(), trip.getOrigin().getLongitude()))
+					                     .title("Origin")
+					                     .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
+			
+		map.addMarker(new MarkerOptions().position(new LatLng(trip.getDestination().getLatitude(), trip.getDestination().getLongitude()))
+					                     .title("Destination")
+					                     .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED)));
+		
 		// Is there a trip to snap to
-		if (!trips.isEmpty()) {
-			Trip trip = trips.get(0);
+		if (trip != null) {
 			// Move camera to first trip's origin
 			map.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(trip.getOrigin().getLatitude(), trip.getOrigin().getLongitude()), 15));
 			
@@ -94,10 +110,10 @@ public class TripCalculator extends FragmentActivity {
 			map.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(35.125395, -89.937043), 15));
 		}
 		
-		final Button button = (Button) findViewById(R.id.switch_to_record_trip);
+		final Button button = (Button) findViewById(R.id.return_to_main);
         button.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-            	switchToRecordTrip();
+            	finish();
             }
         });
 	}
@@ -163,7 +179,7 @@ public class TripCalculator extends FragmentActivity {
 				destination.setLatitude(Double.parseDouble(tokens[2]));
 				destination.setLongitude(Double.parseDouble(tokens[3]));
 
-				trips.add(new Trip(origin, destination));
+				//trips.add(new Trip(origin, destination));
 				
 				line = in.readLine();
 			}

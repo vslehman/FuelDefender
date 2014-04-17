@@ -114,7 +114,7 @@ public class DrivingMonitor extends Service implements LocationListener {
 					// The user has stopped driving
 					isDriving = false;
 					stopDrivingServices();
-					trip.stopTrip(lastDrivingLocation, getApplicationContext(););
+					trip.stopTrip(lastDrivingLocation, getApplicationContext());
 				}
 			}
 		}

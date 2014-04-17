@@ -4,12 +4,26 @@ import android.location.Location;
 
 
 public class Trip {
+	private int id;
 	private Location origin;
 	private Location destination;
+	private int timesTraveled;
 	
-	public Trip(Location origin, Location destination) {
+	public Trip(int id, Location origin, Location destination, int timesTraveled) {
+		this.id = id;
 		this.origin = origin;
 		this.destination = destination;
+		this.timesTraveled = timesTraveled;
+	}
+	
+	public Trip(Location origin, Location destination) {
+		this.id = 0;
+		this.origin = origin;
+		this.destination = destination;
+	}
+	
+	public int getId() {
+		return id;
 	}
 	
 	public void setOrigin(Location origin) {
@@ -32,6 +46,10 @@ public class Trip {
 
 	public Location getDestination() {
 		return destination;
+	}
+	
+	public int getTimesTraveled() {
+		return timesTraveled;
 	}
 	
 }

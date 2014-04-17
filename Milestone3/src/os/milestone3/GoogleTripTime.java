@@ -30,6 +30,14 @@ public class GoogleTripTime {
 	private String bikeTimeText;
 	private String walkTimeText;
 	
+	private long driveDistance;
+	private long bikeDistance;
+	private long walkDistance;
+
+	private String driveDistanceText;
+	private String bikeDistanceText;
+	private String walkDistanceText;
+	
 	private final String TRANSPORT_MODE_DRIVE = "driving";
 	private final String TRANSPORT_MODE_BIKE  = "bicycling";
 	private final String TRANSPORT_MODE_WALK  = "walking";
@@ -41,29 +49,38 @@ public class GoogleTripTime {
 	public GoogleTripTime(Location origin, Location destination) {
 		// Driving
 		String driveResponse = getGoogleMapsDistanceMatrix(origin, destination, TRANSPORT_MODE_DRIVE);
-		ResponsePair driveParsed = getDurationFromJsonResponse(driveResponse);
+		Response driveParsed = getValuesFromJsonResponse(driveResponse);
 		
 		if (driveParsed != null) {
-			driveTime = driveParsed.value;
-			driveTimeText = driveParsed.text;
+			driveTime = driveParsed.timeValue;
+			driveTimeText = driveParsed.timeText;
+			
+			driveDistance = driveParsed.distanceValue;
+			driveDistanceText = driveParsed.distanceText;
 		}
 		
 		// Biking
 		String bikeResponse = getGoogleMapsDistanceMatrix(origin, destination, TRANSPORT_MODE_BIKE);
-		ResponsePair bikeParsed = getDurationFromJsonResponse(bikeResponse);
+		Response bikeParsed = getValuesFromJsonResponse(bikeResponse);
 		
 		if (bikeParsed != null) {
-			bikeTime = bikeParsed.value;
-			bikeTimeText = bikeParsed.text;
+			bikeTime = bikeParsed.timeValue;
+			bikeTimeText = bikeParsed.timeText;
+			
+			bikeDistance = bikeParsed.distanceValue;
+			bikeDistanceText = bikeParsed.distanceText;
 		}
 		
 		// Walking
 		String walkResponse = getGoogleMapsDistanceMatrix(origin, destination, TRANSPORT_MODE_WALK);
-		ResponsePair walkParsed = getDurationFromJsonResponse(walkResponse);
+		Response walkParsed = getValuesFromJsonResponse(walkResponse);
 		
 		if (walkParsed != null) {
-			walkTime = walkParsed.value;
-			walkTimeText = walkParsed.text;
+			walkTime = walkParsed.timeValue;
+			walkTimeText = walkParsed.timeText;
+			
+			walkDistance = walkParsed.distanceValue;
+			walkDistanceText = walkParsed.distanceText;
 		}
 	}
 	
@@ -94,12 +111,36 @@ public class GoogleTripTime {
 	public String getWalkTimeText() {
 		return walkTimeText;
 	}
+	
+	public long getDriveDistance() {
+		return driveDistance;
+	}
+
+	public long getBikeDistance() {
+		return bikeDistance;
+	}
+
+	public long getWalkDistance() {
+		return walkDistance;
+	}
+
+	public String getDriveDistanceText() {
+		return driveDistanceText;
+	}
+
+	public String getBikeDistanceText() {
+		return bikeDistanceText;
+	}
+
+	public String getWalkDistanceText() {
+		return walkDistanceText;
+	}
 
 	/**========================================================================
-	 * public String getGoogleMapsDistanceMatrix()
+	 * private String getGoogleMapsDistanceMatrix()
 	 * ------------------------------------------------------------------------
 	 */
-	public String getGoogleMapsDistanceMatrix(Location origin, Location destination, String mode) {
+	private String getGoogleMapsDistanceMatrix(Location origin, Location destination, String mode) {
 		try {
 			String originCoords = "origins=" + origin.getLatitude() + "," + origin.getLongitude();
 			String destinationCoords = "destinations=" + destination.getLatitude() + "," + destination.getLongitude();
@@ -110,7 +151,19 @@ public class GoogleTripTime {
 			URI url = new URI(apiCall);
 		
 			HttpClient httpclient = new DefaultHttpClient();
-		    HttpResponse response = httpclient.execute(new HttpGet(url));
+			
+			HttpResponse response = null;
+			int connectionAttempts = 0;
+			
+			while (response == null && connectionAttempts < 3) {
+				try {
+					response = httpclient.execute(new HttpGet(url));
+				}
+				catch (Exception e) {
+					connectionAttempts++;
+				}
+			}
+			
 		    StatusLine statusLine = response.getStatusLine();
 		    if(statusLine.getStatusCode() == HttpStatus.SC_OK){
 		        ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -133,10 +186,10 @@ public class GoogleTripTime {
 	}
 	
 	/**========================================================================
-	 * public ResponsePair getDurationFromJsonResponse()
+	 * public ResponsePair getValuesFromJsonResponse()
 	 * ------------------------------------------------------------------------
 	 */
-	public ResponsePair getDurationFromJsonResponse(String response) {
+	private Response getValuesFromJsonResponse(String response) {
 		
 		try {
 			JSONObject json = new JSONObject(response);
@@ -144,11 +197,16 @@ public class GoogleTripTime {
 	        JSONObject object = rows.getJSONObject(0);
 	        JSONArray elements = object.getJSONArray("elements");
 	        JSONObject obj2 = elements.getJSONObject(0);
-	        JSONObject duration = obj2.getJSONObject("duration");
-	        long value = duration.getLong("value");
-	        String text = duration.getString("text");
 	        
-	        return new ResponsePair(value, text);
+	        JSONObject duration = obj2.getJSONObject("duration");
+	        long timeValue = duration.getLong("value");
+	        String timeText = duration.getString("text");
+	        
+	        JSONObject distance = obj2.getJSONObject("distance");
+	        long distanceValue = distance.getLong("value");
+	        String distanceText = distance.getString("text");
+	        
+	        return new Response(timeValue, timeText, distanceValue, distanceText);
 		}
 		catch (JSONException e) {
 			return null;
@@ -156,17 +214,22 @@ public class GoogleTripTime {
 	}
 	
 	/******************************************************************************
-	* public class ResponsePair
+	* public class Response
 	*------------------------------------------------------------------------------
 	*/
-	private class ResponsePair {
+	private class Response {
 		
-		public long value;
-		public String text;
+		public long timeValue;
+		public String timeText;
 		
-		public ResponsePair(long value, String text) {
-			this.value = value;
-			this.text = text;
+		public long distanceValue;
+		public String distanceText;
+		
+		public Response(long timeValue, String timeText, long distanceValue, String distanceText) {
+			this.timeValue = timeValue;
+			this.timeText = timeText;
+			this.distanceValue = distanceValue;
+			this.distanceText = distanceText;
 		}
 	}
 }

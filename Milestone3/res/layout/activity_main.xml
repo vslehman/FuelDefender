@@ -70,15 +70,23 @@
 	        android:layout_width="match_parent"
 	        android:layout_height="393dp" >
 
-	        <Button
+	        <!--<Button
 	            android:id="@+id/switch_to_record_trip"
 	            android:layout_width="wrap_content"
 	            android:layout_height="wrap_content"
 	            android:layout_alignParentBottom="true"
 	            android:layout_centerHorizontal="true"
 	            android:layout_marginBottom="47dp"
-	            android:text="Record Trip" />
-
+	            android:text="Record Trip" />-->
+			
+			<Button
+	            android:id="@+id/return_to_main"
+	            android:layout_width="wrap_content"
+	            android:layout_height="wrap_content"
+	            android:layout_alignParentBottom="true"
+	            android:layout_centerHorizontal="true"
+	            android:layout_marginBottom="47dp"
+	            android:text="Return to Your Trips" />
 	    </RelativeLayout>
 
 	</LinearLayout>

@@ -41,6 +41,9 @@ public class TripDao extends SQLiteOpenHelper {
 	private static final String DESTINATION_TIMESTAMP_KEY = "destination_timestamp";
 	private static final String DESTINATION_TIMESTAMP_DEFINITION = "LONG";
 	
+	private static final String TIMES_TRAVELED_KEY = "times_traveled";
+	private static final String TIMES_TRAVELED_DEFINITION = "INT DEFAULT 1";
+	
 	private static final String CREATE_TABLE =  "CREATE TABLE " + TABLE_NAME + " ( " +
 			                                    ID_KEY + " " + ID_DEFINITION + ", " +
 			                                    ORIGIN_LATITUDE_KEY + " " + ORIGIN_LATITUDE_DEFINITION + ", " +
@@ -48,7 +51,8 @@ public class TripDao extends SQLiteOpenHelper {
 			                                    ORIGIN_TIMESTAMP_KEY + " " + ORIGIN_TIMESTAMP_DEFINITION + ", " +
 			                                    DESTINATION_LATITUDE_KEY + " " + DESTINATION_LATITUDE_DEFINITION + ", " +
 			                                    DESTINATION_LONGITUDE_KEY + " " + DESTINATION_LONGITUDE_DEFINITION + ", " +
-			                                    DESTINATION_TIMESTAMP_KEY + " " + DESTINATION_TIMESTAMP_DEFINITION + ");";
+			                                    DESTINATION_TIMESTAMP_KEY + " " + DESTINATION_TIMESTAMP_DEFINITION + ", " +
+			                                    TIMES_TRAVELED_KEY + " " + TIMES_TRAVELED_DEFINITION + ");";
 	
 	/**========================================================================
 	 * public TripDao()
@@ -82,6 +86,8 @@ public class TripDao extends SQLiteOpenHelper {
 		Cursor cursor = db.rawQuery("SELECT * FROM " + TABLE_NAME, null);
         
 		while (cursor.moveToNext()) {
+			int id = cursor.getInt(cursor.getColumnIndex(ID_KEY));
+			
 			double originLatitude = cursor.getDouble(cursor.getColumnIndex(ORIGIN_LATITUDE_KEY));
 			double originLongitude = cursor.getDouble(cursor.getColumnIndex(ORIGIN_LONGITUDE_KEY));
 			long originTimestamp = cursor.getLong(cursor.getColumnIndex(ORIGIN_TIMESTAMP_KEY));
@@ -89,6 +95,8 @@ public class TripDao extends SQLiteOpenHelper {
 			double destinationLatitude = cursor.getDouble(cursor.getColumnIndex(DESTINATION_LATITUDE_KEY));
 			double destinationLongitude = cursor.getDouble(cursor.getColumnIndex(DESTINATION_LONGITUDE_KEY));
 			long destinationTimestamp = cursor.getLong(cursor.getColumnIndex(DESTINATION_TIMESTAMP_KEY));
+			
+			int timesTraveled = cursor.getInt(cursor.getColumnIndex(TIMES_TRAVELED_KEY));
 			
 			Location origin = new Location("Database");
 			origin.setLatitude(originLatitude);
@@ -100,8 +108,11 @@ public class TripDao extends SQLiteOpenHelper {
 			destination.setLongitude(destinationLongitude);
 			destination.setTime(destinationTimestamp);
 			
-			tripList.add(new Trip(origin, destination));
+			tripList.add(new Trip(id, origin, destination, timesTraveled));
 		}
+		
+		cursor.close();
+		cursor = null;
 		
 		db.close();
 		db = null;
@@ -130,6 +141,18 @@ public class TripDao extends SQLiteOpenHelper {
 	    db.insert(TABLE_NAME, null, values);
 	    
 	    db.close();
+		db = null;
+	}
+	
+	/**========================================================================
+	 * public void incrementTimesTraveled()
+	 * ------------------------------------------------------------------------
+	 */
+	public void incrementTimesTraveled(int id) {
+		//SQLiteDatabase db = getWritableDatabase();
+		//db.execSQL("UPDATE " + TABLE_NAME +" SET " + TIMES_TRAVELED_KEY + " = " + TIMES_TRAVELED_KEY + " + 1 WHERE id=" + id );
+		//db.close();
+		//db = null;
 	}
 	
 	/**========================================================================
