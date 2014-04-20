@@ -1,9 +1,5 @@
 package os.milestone3;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.util.ArrayList;
 
 import android.content.ContentValues;
@@ -12,7 +8,6 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.location.Location;
-import android.os.Environment;
 
 /******************************************************************************
 * public class TripDao
@@ -57,6 +52,8 @@ public class TripDao extends SQLiteOpenHelper {
 			                                    DESTINATION_LONGITUDE_KEY + " " + DESTINATION_LONGITUDE_DEFINITION + ", " +
 			                                    DESTINATION_TIMESTAMP_KEY + " " + DESTINATION_TIMESTAMP_DEFINITION + ", " +
 			                                    TIMES_TRAVELED_KEY + " " + TIMES_TRAVELED_DEFINITION + ");";
+	
+	private final String TRIP_LOG_FILENAME = "trip_log.txt";
 	
 	/**========================================================================
 	 * public TripDao()
@@ -172,56 +169,23 @@ public class TripDao extends SQLiteOpenHelper {
 	/**========================================================================
 	 * public void exportToFile
 	 * ------------------------------------------------------------------------
-	 */
-	private static final String logDirectory = Environment.getExternalStorageDirectory().getPath() + "/fuel_defender/";
-	private static final String tripLog = logDirectory + "trip_log.txt";
-	
+	 */	
 	public void exportToFile() {
 		
-		// Create directory, if needed
-		File appDirectory = new File(logDirectory);
-		appDirectory.mkdirs();
+		LogFile log = new LogFile(TRIP_LOG_FILENAME, false);
+		// Write header
+		log.write("origin_latitude,origin_longitude,destination_latitude,destination_longitude,timesTraveled");
+			
+		ArrayList<Trip> tripList = getTrips();
+			
+		for (Trip trip : tripList) {
+			log.write(String.format("%f,%f,%f,%f,%d", trip.getOrigin().getLatitude(), trip.getOrigin().getLongitude(),
+                                                      trip.getDestination().getLatitude(), trip.getDestination().getLongitude(),
+                                                      trip.getTimesTraveled()));
+		}
+		
+		log = null;
 
-		File logFile = new File(tripLog);
-
-		if (!logFile.exists())
-		{
-			try
-			{
-				logFile.createNewFile();
-			} 
-			catch (IOException e)
-			{
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-		try
-		{
-			//BufferedWriter for performance, true to set append to file flag
-			BufferedWriter buf = new BufferedWriter(new FileWriter(logFile, true));
-			
-			// Write header
-			buf.append("origin_latitude,origin_longitude,destination_latitude,destination_longitude,timesTraveled");
-			buf.newLine();
-			
-			ArrayList<Trip> tripList = getTrips();
-			
-			for (Trip trip : tripList) {
-				buf.append(String.format("%f,%f,%f,%f,%d", trip.getOrigin().getLatitude(), trip.getOrigin().getLongitude(),
-						trip.getDestination().getLatitude(), trip.getDestination().getLongitude(),
-						trip.getTimesTraveled()));
-				buf.newLine();
-			}
-			
-			buf.close();
-			buf = null;
-		}
-		catch (IOException e)
-		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 	}
 
 }

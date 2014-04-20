@@ -1,10 +1,5 @@
 package os.milestone3;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -125,41 +120,13 @@ public class TripMonitor extends Activity {
 	 * ------------------------------------------------------------------------
 	 */
 	private void logTrip(Trip trip, String filename) {
-		// Create directory, if needed
-		File appDirectory = new File(logDirectory);
-		appDirectory.mkdirs();
-
-		File logFile = new File(filename);
 		
-		if (!logFile.exists())
-		{
-			try
-			{
-				logFile.createNewFile();
-			} 
-			catch (IOException e)
-			{
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-		try
-		{
-			//BufferedWriter for performance, true to set append to file flag
-			BufferedWriter buf = new BufferedWriter(new FileWriter(logFile, true));
-			
-			buf.append(String.format("%f %f %f %f %d", trip.getOrigin().getLatitude(), trip.getOrigin().getLongitude(),
-					                                   trip.getDestination().getLatitude(), trip.getDestination().getLongitude(),
-					                                   trip.getElapsedTime()));
-			buf.newLine();
-			buf.close();
-			buf = null;
-		}
-		catch (IOException e)
-		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		LogFile log = new LogFile(filename, true);
+
+		log.write(String.format("%f %f %f %f %d", trip.getOrigin().getLatitude(), trip.getOrigin().getLongitude(),
+					                              trip.getDestination().getLatitude(), trip.getDestination().getLongitude(),
+					                              trip.getElapsedTime()));
+		log = null;
 	}
 	
 	/******************************************************************************

@@ -37,6 +37,9 @@ public class TripDisplay extends Activity {
 		// Start monitoring the user's driving
 		startService(new Intent(this, DrivingMonitor.class));
 		
+		// Start monitoring the battery level
+		startService(new Intent(this, BatteryMonitor.class));
+		
 		// Display trips from the database
 		ArrayList<Trip> tripList = dao.getTrips();
 		

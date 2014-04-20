@@ -47,6 +47,12 @@
 			android:label="DrivingMonitor"
             android:enabled="true" >
 		</service>
+		
+		<service
+			android:name=".BatteryMonitor"
+			android:label="BatteryMonitor"
+            android:enabled="true" >
+		</service>
         
         <activity 
         	android:name=".TripMonitor" 
