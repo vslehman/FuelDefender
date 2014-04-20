@@ -34,6 +34,26 @@ public class BatteryMonitor extends Service {
     }
 	
 	/**========================================================================
+	 * public void onStartCommand()
+	 * ------------------------------------------------------------------------
+	 */
+	@Override
+    public int onStartCommand(Intent intent, int flags, int startId) {	
+		// Schedule battery check
+		batteryCheckTimer = new Timer();
+		
+		batteryCheckTimer.schedule(new TimerTask() {
+			@Override
+			public void run() {
+				checkBattery();
+			}
+		}, 0, BATTERY_CHECK_PERIOD);
+		
+		// Allow the service to run uninterrupted in the background
+		return START_STICKY;
+    }
+	
+	/**========================================================================
 	 * private void checkBattery()
 	 * ------------------------------------------------------------------------
 	 */
