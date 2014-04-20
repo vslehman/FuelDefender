@@ -10,7 +10,6 @@ import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.media.MediaPlayer;
 import android.os.IBinder;
-import android.os.SystemClock;
 import android.widget.Toast;
 
 /******************************************************************************

@@ -34,14 +34,14 @@
 	            android:id="@+id/driveTimeLabel"
 	            android:layout_width="wrap_content"
 	            android:layout_height="wrap_content"
-	            android:text="Drive time:  "
+	            android:text="@string/drive_time_label"
 	            android:textAppearance="?android:attr/textAppearanceLarge" />
 
 	        <TextView
 	            android:id="@+id/driveTimeValue"
 	            android:layout_width="wrap_content"
 	            android:layout_height="wrap_content"
-	            android:text="--"
+	            android:text="@string/null_value"
 	            android:textAppearance="?android:attr/textAppearanceLarge" />
 	    </TableRow>
 
@@ -62,7 +62,7 @@
 	            android:id="@+id/walkTimeValue"
 	            android:layout_width="wrap_content"
 	            android:layout_height="wrap_content"
-	            android:text="--"
+	            android:text="@string/null_value"
 	            android:textAppearance="?android:attr/textAppearanceLarge" />
 	    </TableRow>
 
@@ -86,7 +86,7 @@
 	            android:layout_alignParentBottom="true"
 	            android:layout_centerHorizontal="true"
 	            android:layout_marginBottom="47dp"
-	            android:text="Return to Your Trips" />
+	            android:text="@string/return_to_trips" />
 	    </RelativeLayout>
 
 	</LinearLayout>

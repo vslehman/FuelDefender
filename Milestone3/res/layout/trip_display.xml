@@ -17,6 +17,8 @@
             android:text="Your Trips"
             android:textColor="#FFFFFF"
             android:textAppearance="?android:attr/textAppearanceLarge" />
+
+
         <View
     		android:layout_width="fill_parent"
     		android:layout_height="1dip"
@@ -28,6 +30,31 @@
             android:layout_height="match_parent"
             android:orientation="vertical" >
         </LinearLayout>
+        
+        <View
+    		android:layout_width="fill_parent"
+    		android:layout_height="1dip"
+			android:background="#000000" />
+        
+		<Button
+		    android:id="@+id/export_button"
+		    android:layout_width="match_parent"
+		    android:layout_height="wrap_content"
+		    android:text="@string/export_database"
+		    android:onClick="exportDatabase" />
+		
+		<View
+    		android:layout_width="fill_parent"
+    		android:layout_height="1dip"
+			android:background="#000000" />
+		
+		<TextView
+            android:id="@+id/driving_status"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:textColor="#FF0000"
+            android:textAppearance="?android:attr/textAppearanceLarge" />
 
     </LinearLayout>
 

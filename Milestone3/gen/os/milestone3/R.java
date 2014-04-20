@@ -223,12 +223,14 @@ containing a value of this type.
     }
     public static final class id {
         public static final int RelativeLayout1=0x7f06000e;
-        public static final int action_settings=0x7f060017;
+        public static final int action_settings=0x7f060019;
         public static final int button_layout=0x7f060016;
         public static final int destination_label=0x7f060011;
         public static final int destination_value=0x7f060012;
         public static final int driveTimeLabel=0x7f060008;
         public static final int driveTimeValue=0x7f060009;
+        public static final int driving_status=0x7f060018;
+        public static final int export_button=0x7f060017;
         public static final int hybrid=0x7f060004;
         public static final int map=0x7f060005;
         public static final int none=0x7f060000;
@@ -287,6 +289,7 @@ containing a value of this type.
         [CHAR LIMIT=70] 
          */
         public static final int auth_client_using_bad_version_title=0x7f070013;
+        public static final int back_to_trip_calculator=0x7f07001e;
         /**  Button in confirmation dialog to enable Google Play services.  Clicking it
         will direct user to application settings of Google Play services where they
         can enable it [CHAR LIMIT=40] 
@@ -355,7 +358,13 @@ containing a value of this type.
         /**  Long form sign-in button text [CHAR LIMIT=30] 
          */
         public static final int common_signin_button_text_long=0x7f070012;
+        public static final int destination_label=0x7f07001f;
+        public static final int drive_time_label=0x7f070020;
+        public static final int export_database=0x7f070021;
         public static final int hello_world=0x7f07001c;
+        public static final int null_value=0x7f07001d;
+        public static final int origin_label=0x7f070022;
+        public static final int return_to_trips=0x7f070023;
     }
     public static final class style {
         /** 

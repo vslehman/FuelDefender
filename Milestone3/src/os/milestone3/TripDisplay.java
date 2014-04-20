@@ -1,17 +1,18 @@
 package os.milestone3;
 
 import java.util.ArrayList;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
-import android.location.Location;
-import android.location.LocationManager;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.Button;
+import android.widget.TextView;
 
 import java.text.NumberFormat;
 
@@ -20,6 +21,7 @@ public class TripDisplay extends Activity {
 	private double gasPricePerGallon = 3.32;
 	private final double AVERAGE_MPG = 24.8;
 	private final double METERS_TO_MILES_FACTOR = 0.000621371;
+	private Timer drivingCheckTimer;
 	
 	/**========================================================================
 	 * public void onCreate()
@@ -35,43 +37,23 @@ public class TripDisplay extends Activity {
 		// Start monitoring the user's driving
 		startService(new Intent(this, DrivingMonitor.class));
 		
-		// Add trips for test data
-		Location origin = new Location("Test");
-		origin.setLatitude(35.1252276);
-		origin.setLongitude(-89.937345);
-		
-		Location destination = new Location("Test");
-		destination.setLatitude(35.1149945);
-		destination.setLongitude(-89.9388618);
-		
-		dao.addTrip(new Trip(origin, destination));
-		
-		Location lot = new Location("Test");
-		lot.setLatitude(35.1152366);
-		lot.setLongitude(-89.9390134);
-		
-		Location dest2 = new Location("Test");
-		dest2.setLatitude(35.1076483);
-		dest2.setLongitude(-89.9289166);
-		
-		dao.addTrip(new Trip(lot, dest2));
-		
-		Location origin3 = new Location("Test");
-		origin3.setLatitude(35.1252887);
-		origin3.setLongitude(-89.9370801);
-		
-		Location dest3 = new Location("Test");
-		dest3.setLatitude(35.0836777);
-		dest3.setLongitude(-89.7295976);
-		
-		dao.addTrip(new Trip(origin3, dest3));
-		
 		// Display trips from the database
 		ArrayList<Trip> tripList = dao.getTrips();
 		
 		for (Trip trip : tripList) {
 			addTripButton(trip);
 		}
+		
+		dao = null;
+		
+		// Schedule driving check
+		drivingCheckTimer = new Timer();
+		drivingCheckTimer.schedule(new TimerTask() {
+			@Override
+			public void run() {
+				checkDrivingStatus();
+			}
+		}, 0, 30000);
 	}
 	
 	/**========================================================================
@@ -120,5 +102,34 @@ public class TripDisplay extends Activity {
 		
 		ViewGroup layout = (ViewGroup)findViewById(R.id.button_layout);
 		layout.addView(button);
+	}
+	
+	/**========================================================================
+	 * public void exportDatabase()
+	 * ------------------------------------------------------------------------
+	 */
+	public void exportDatabase(View view) {
+		TripDao dao = new TripDao(this);
+		dao.exportToFile();
+	}
+	
+	/**========================================================================
+	 * public void checkDrivingStatus()
+	 * ------------------------------------------------------------------------
+	 */
+	private void checkDrivingStatus() {
+		runOnUiThread(new Runnable() {
+	        public void run() {
+	        	TextView status = (TextView)findViewById(R.id.driving_status);
+	        	if (DrivingMonitor.userIsDriving()) {
+	    			status.setText("Driving");
+	    			status.setTextColor(Color.GREEN);
+	    		}
+	    		else {
+	    			status.setText("Not Driving");
+	    			status.setTextColor(Color.RED);
+	    		}
+	        } 
+	    });
 	}
 }

@@ -1,14 +1,18 @@
 package os.milestone3;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteDatabase.CursorFactory;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.location.Location;
+import android.os.Environment;
 
 /******************************************************************************
 * public class TripDao
@@ -163,6 +167,61 @@ public class TripDao extends SQLiteOpenHelper {
 	public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 		// TODO Auto-generated method stub
 		
+	}
+	
+	/**========================================================================
+	 * public void exportToFile
+	 * ------------------------------------------------------------------------
+	 */
+	private static final String logDirectory = Environment.getExternalStorageDirectory().getPath() + "/fuel_defender/";
+	private static final String tripLog = logDirectory + "trip_log.txt";
+	
+	public void exportToFile() {
+		
+		// Create directory, if needed
+		File appDirectory = new File(logDirectory);
+		appDirectory.mkdirs();
+
+		File logFile = new File(tripLog);
+
+		if (!logFile.exists())
+		{
+			try
+			{
+				logFile.createNewFile();
+			} 
+			catch (IOException e)
+			{
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		try
+		{
+			//BufferedWriter for performance, true to set append to file flag
+			BufferedWriter buf = new BufferedWriter(new FileWriter(logFile, true));
+			
+			// Write header
+			buf.append("origin_latitude,origin_longitude,destination_latitude,destination_longitude,timesTraveled");
+			buf.newLine();
+			
+			ArrayList<Trip> tripList = getTrips();
+			
+			for (Trip trip : tripList) {
+				buf.append(String.format("%f,%f,%f,%f,%d", trip.getOrigin().getLatitude(), trip.getOrigin().getLongitude(),
+						trip.getDestination().getLatitude(), trip.getDestination().getLongitude(),
+						trip.getTimesTraveled()));
+				buf.newLine();
+			}
+			
+			buf.close();
+			buf = null;
+		}
+		catch (IOException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 }
