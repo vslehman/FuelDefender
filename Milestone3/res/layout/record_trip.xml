@@ -10,7 +10,7 @@
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:layout_centerVertical="true"
-        android:text="Start Trip" />
+        android:text="@string/start_trip_label" />
 
     <TextView
         android:id="@+id/origin_label"

@@ -55,7 +55,7 @@
 	            android:id="@+id/walkTimeLabel"
 	            android:layout_width="wrap_content"
 	            android:layout_height="wrap_content"
-	            android:text="Walk time:  "
+	            android:text="@string/walk_time_label"
 	            android:textAppearance="?android:attr/textAppearanceLarge" />
 
 	        <TextView

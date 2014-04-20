@@ -360,11 +360,15 @@ containing a value of this type.
         public static final int common_signin_button_text_long=0x7f070012;
         public static final int destination_label=0x7f07001f;
         public static final int drive_time_label=0x7f070020;
+        public static final int driving_status_label=0x7f070027;
         public static final int export_database=0x7f070021;
         public static final int hello_world=0x7f07001c;
         public static final int null_value=0x7f07001d;
         public static final int origin_label=0x7f070022;
         public static final int return_to_trips=0x7f070023;
+        public static final int start_trip_label=0x7f070024;
+        public static final int walk_time_label=0x7f070025;
+        public static final int your_trips_label=0x7f070026;
     }
     public static final class style {
         /** 

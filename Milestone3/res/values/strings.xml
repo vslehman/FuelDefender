@@ -11,5 +11,9 @@
     <string name="export_database">Export database to file</string>
     <string name="origin_label">Origin:</string>
     <string name="return_to_trips">Return to Your Trips</string>
+    <string name="start_trip_label">Start Trip</string>
+    <string name="walk_time_label">Walk time:  </string>
+    <string name="your_trips_label">Your Trips</string>
+    <string name="driving_status_label">Not Driving</string>
 
 </resources>

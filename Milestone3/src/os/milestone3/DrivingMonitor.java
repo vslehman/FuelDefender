@@ -30,6 +30,7 @@ public class DrivingMonitor extends Service implements LocationListener {
 	private double DRIVING_COOLDOWN_SECONDS = 300;
 	
 	private static boolean isDriving = false;
+	private static boolean onTrip = false;
 	
 	private TripRecorder trip = new TripRecorder();
 	
@@ -66,6 +67,28 @@ public class DrivingMonitor extends Service implements LocationListener {
     	// Allow the service to run uninterrupted in the background
 		return START_STICKY;
 	}
+    
+    /**========================================================================
+	 * private void startTrip()
+	 * ------------------------------------------------------------------------
+	 */
+    private void startTrip(Location currentLocation) {
+    	isDriving = true;
+		startDrivingServices();
+		trip.startTrip(currentLocation);
+		onTrip = true;
+    }
+    
+    /**========================================================================
+	 * private void stopTrip()
+	 * ------------------------------------------------------------------------
+	 */
+    private void stopTrip(Location destination) {
+    	isDriving = false;
+		stopDrivingServices();
+		trip.stopTrip(destination, getApplicationContext());
+		onTrip = false;
+    }
 
 	/**========================================================================
 	 * public void onLocationChanged()
@@ -87,21 +110,23 @@ public class DrivingMonitor extends Service implements LocationListener {
 		
 		// The user is driving
 		if (avgSpeed > DRIVING_SPEED_THRESHOLD) {
-			isDriving = true;
+
 			lastDrivingLocation = currentLocation;
-			startDrivingServices();
-			trip.startTrip(lastLocation);
+			
+			// Is this the beginning of the trip?
+			if (onTrip == false) {
+				startTrip(currentLocation);
+			}
+			
 		} // The user is not moving at driving speeds
 		else {
 			if (lastDrivingLocation != null) {
 				long timeSinceLastDrivingUpdate = (currentLocation.getTime() - lastDrivingLocation.getTime())/1000;
 				
 				// If the user has not recorded a new driving location in the cooldown interval
-				if (timeSinceLastDrivingUpdate > DRIVING_COOLDOWN_SECONDS) {
+				if (timeSinceLastDrivingUpdate > DRIVING_COOLDOWN_SECONDS && isDriving == true) {
 					// The user has stopped driving
-					isDriving = false;
-					stopDrivingServices();
-					trip.stopTrip(lastDrivingLocation, getApplicationContext());
+					stopTrip(lastDrivingLocation);
 				}
 			}
 		}
