@@ -19,8 +19,8 @@ import android.widget.Toast;
 *------------------------------------------------------------------------------
 */
 public class AccelerationAlarm extends Service implements SensorEventListener {
-	
-	private SensorManager mSensorManager;
+    
+    private SensorManager mSensorManager;
     private Sensor mSensor;
     
     private MediaPlayer mediaPlayer;
@@ -37,72 +37,72 @@ public class AccelerationAlarm extends Service implements SensorEventListener {
     
     private long lastAlarmTime;
     private final long ALARM_COOLDOWN_NANOSECONDS = 5000000000L;
-	
+    
     /**========================================================================
-	 * public void onCreate()
-	 * ------------------------------------------------------------------------
-	 */
+     * public void onCreate()
+     * ------------------------------------------------------------------------
+     */
     @SuppressLint("InlinedApi")
-	@Override
-    public void onCreate() {	
-    	// Initialize sound
+    @Override
+    public void onCreate() {    
+        // Initialize sound
         mediaPlayer = MediaPlayer.create(this, R.raw.acceleration_alarm);
         lastAlarmTime = System.nanoTime();
     }
     
     /**========================================================================
-	 * public int onStartCommand()
-	 * ------------------------------------------------------------------------
-	 */
+     * public int onStartCommand()
+     * ------------------------------------------------------------------------
+     */
     @SuppressLint("InlinedApi")
-	@Override
-	public int onStartCommand(Intent intent, int flags, int startId) {
-    	// Set up sensor
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        // Set up sensor
         mSensorManager = (SensorManager)getSystemService(Context.SENSOR_SERVICE);
-	    mSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_LINEAR_ACCELERATION);
-	    
-	    // Phone doesn't support Linear Accelerometer
-	    if (mSensor == null) {
-	    	mSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
-	    	usingLinearAcceleration = false;
-	    	
-	    	// Will need to track gravity for weighted moving average
-	    	if (gravity == null) {
-        		gravity = new double[3];
-        	}
-	    }
+        mSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_LINEAR_ACCELERATION);
+        
+        // Phone doesn't support Linear Accelerometer
+        if (mSensor == null) {
+            mSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+            usingLinearAcceleration = false;
+            
+            // Will need to track gravity for weighted moving average
+            if (gravity == null) {
+                gravity = new double[3];
+            }
+        }
         
         // Register the accelerometer
         mSensorManager.registerListener(this, mSensor, SensorManager.SENSOR_DELAY_NORMAL);
         
         // Show notification
-    	Toast.makeText(this, "Starting Acceleration Alarm", Toast.LENGTH_SHORT).show();
-    	
-    	// Allow the service to run uninterrupted in the background
-		return START_STICKY;
-	}
-	
-	/**========================================================================
-	 * private void playAlarm()
-	 * ------------------------------------------------------------------------
-	 */
-    private void playAlarm(){
-    	mediaPlayer.seekTo(0);
-    	mediaPlayer.start();
+        Toast.makeText(this, "Starting Acceleration Alarm", Toast.LENGTH_SHORT).show();
+        
+        // Allow the service to run uninterrupted in the background
+        return START_STICKY;
     }
     
     /**========================================================================
-	 * public void onSensorChanged
-	 * ------------------------------------------------------------------------
-	 */
-	@Override
-	public void onSensorChanged(SensorEvent event) {
-		
-		// Has the user been alerted recently?
-		if (lastAlarmTime + ALARM_COOLDOWN_NANOSECONDS > System.nanoTime()) {
-			return;
-		}
-		
+     * private void playAlarm()
+     * ------------------------------------------------------------------------
+     */
+    private void playAlarm(){
+        mediaPlayer.seekTo(0);
+        mediaPlayer.start();
+    }
+    
+    /**========================================================================
+     * public void onSensorChanged
+     * ------------------------------------------------------------------------
+     */
+    @Override
+    public void onSensorChanged(SensorEvent event) {
+        
+        // Has the user been alerted recently?
+        if (lastAlarmTime + ALARM_COOLDOWN_NANOSECONDS > System.nanoTime()) {
+            return;
+        }
+        
         // Get sensor data
         long timestamp = event.timestamp;
         double xAccel;
@@ -111,14 +111,14 @@ public class AccelerationAlarm extends Service implements SensorEventListener {
         
         // If using the linear accelerometer, no need to remove gravity
         if (usingLinearAcceleration) {
-        	xAccel = event.values[X_INDEX];
+            xAccel = event.values[X_INDEX];
             yAccel = event.values[Y_INDEX];
             zAccel = event.values[Z_INDEX];
         }
         else {
-        	// Using the standard accelerometer, need to remove gravity
-        	// Calculate low pass filter with weighted moving average 
-        	gravity[X_INDEX] = alpha*gravity[X_INDEX] + (1 - alpha)*event.values[X_INDEX];
+            // Using the standard accelerometer, need to remove gravity
+            // Calculate low pass filter with weighted moving average 
+            gravity[X_INDEX] = alpha*gravity[X_INDEX] + (1 - alpha)*event.values[X_INDEX];
             gravity[Y_INDEX] = alpha*gravity[Y_INDEX] + (1 - alpha)*event.values[Y_INDEX];
             gravity[Z_INDEX] = alpha*gravity[Z_INDEX] + (1 - alpha)*event.values[Z_INDEX];
 
@@ -133,36 +133,36 @@ public class AccelerationAlarm extends Service implements SensorEventListener {
             playAlarm();
             lastAlarmTime = System.nanoTime();
         }
-	}
+    }
     
     /**========================================================================
-	 * public void onDestroy()
-	 * ------------------------------------------------------------------------
-	 */
+     * public void onDestroy()
+     * ------------------------------------------------------------------------
+     */
     @Override
     public void onDestroy(){
-    	mediaPlayer.stop();
-    	mediaPlayer.release();
-    	mediaPlayer = null;
-	}
+        mediaPlayer.stop();
+        mediaPlayer.release();
+        mediaPlayer = null;
+    }
     
     /**========================================================================
-	 * public void onBind()
-	 * ------------------------------------------------------------------------
-	 */
-	@Override
-	public IBinder onBind(Intent arg0) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-	
-	/**========================================================================
-	 * public void onAccuracyChanged
-	 * ------------------------------------------------------------------------
-	 */
-	@Override
-	public void onAccuracyChanged(Sensor sensor, int accuracy) {
-		// TODO Auto-generated method stub
-		
-	}
+     * public void onBind()
+     * ------------------------------------------------------------------------
+     */
+    @Override
+    public IBinder onBind(Intent arg0) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+    
+    /**========================================================================
+     * public void onAccuracyChanged
+     * ------------------------------------------------------------------------
+     */
+    @Override
+    public void onAccuracyChanged(Sensor sensor, int accuracy) {
+        // TODO Auto-generated method stub
+        
+    }
 }

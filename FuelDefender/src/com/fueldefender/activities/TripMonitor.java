@@ -21,189 +21,189 @@ import android.widget.TextView;
 *------------------------------------------------------------------------------
 */
 public class TripMonitor extends Activity {
-	
-	private LocationManager locationManager;
-	private String locationProvider = LocationManager.GPS_PROVIDER;
-	private Trip tempTrip;
-	
-	private static final String logDirectory = Environment.getExternalStorageDirectory().getPath() + "/fuel_defender/";
-	private static final String tripLog = logDirectory + "trip_log.txt";
-	
-	/**========================================================================
-	 * public void onCreate()
-	 * ------------------------------------------------------------------------
-	 */
-	@Override
-	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		setContentView(R.layout.record_trip);
-		
-		locationManager = (LocationManager)this.getSystemService(Context.LOCATION_SERVICE);
-		
-		// If GPS is not available, use Wifi
-		if (!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
-			locationProvider = LocationManager.NETWORK_PROVIDER;
-		}
-		
-		final Button button = (Button)findViewById(R.id.record_trip);
+  
+  private LocationManager locationManager;
+  private String locationProvider = LocationManager.GPS_PROVIDER;
+  private Trip tempTrip;
+  
+  private static final String logDirectory = Environment.getExternalStorageDirectory().getPath() + "/fuel_defender/";
+  private static final String tripLog = logDirectory + "trip_log.txt";
+  
+  /**========================================================================
+   * public void onCreate()
+   * ------------------------------------------------------------------------
+   */
+  @Override
+  protected void onCreate(Bundle savedInstanceState) {
+    super.onCreate(savedInstanceState);
+    setContentView(R.layout.record_trip);
+    
+    locationManager = (LocationManager)this.getSystemService(Context.LOCATION_SERVICE);
+    
+    // If GPS is not available, use Wifi
+    if (!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+      locationProvider = LocationManager.NETWORK_PROVIDER;
+    }
+    
+    final Button button = (Button)findViewById(R.id.record_trip);
         button.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-            	startTrip();
+              startTrip();
             }
         });
-	}
-	
-	/**========================================================================
-	 * public void switchToTripCalculator()
-	 * ------------------------------------------------------------------------
-	 */
-	public void switchToTripCalculator(View view) {
-		Intent myIntent = new Intent(this, TripCalculator.class);
-		startActivity(myIntent);
-	}
-	
-	/**========================================================================
-	 * public String getTripLog()
-	 * ------------------------------------------------------------------------
-	 */
-	public static String getTripLog() {
-		return tripLog;
-	}
-	
-	/**========================================================================
-	 * public void startTrip()
-	 * ------------------------------------------------------------------------
-	 */
-	public void startTrip() {
-		
-		// Update button label
-		Button tripButton = (Button)findViewById(R.id.record_trip);
-		tripButton.setText("Stop trip");
-		
-		// Clear location values
-		TextView originValue = (TextView)findViewById(R.id.origin_value);
-		originValue.setText("");
-		
-		TextView destinationValue = (TextView)findViewById(R.id.destination_value);
-		destinationValue.setText("");
+  }
+  
+  /**========================================================================
+   * public void switchToTripCalculator()
+   * ------------------------------------------------------------------------
+   */
+  public void switchToTripCalculator(View view) {
+    Intent myIntent = new Intent(this, TripCalculator.class);
+    startActivity(myIntent);
+  }
+  
+  /**========================================================================
+   * public String getTripLog()
+   * ------------------------------------------------------------------------
+   */
+  public static String getTripLog() {
+    return tripLog;
+  }
+  
+  /**========================================================================
+   * public void startTrip()
+   * ------------------------------------------------------------------------
+   */
+  public void startTrip() {
+    
+    // Update button label
+    Button tripButton = (Button)findViewById(R.id.record_trip);
+    tripButton.setText("Stop trip");
+    
+    // Clear location values
+    TextView originValue = (TextView)findViewById(R.id.origin_value);
+    originValue.setText("");
+    
+    TextView destinationValue = (TextView)findViewById(R.id.destination_value);
+    destinationValue.setText("");
 
-		// Register for updates
-		locationManager.requestLocationUpdates(locationProvider, 0, 0, new StartTripListener());
+    // Register for updates
+    locationManager.requestLocationUpdates(locationProvider, 0, 0, new StartTripListener());
 
-		// Change button's functionality
+    // Change button's functionality
         tripButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-            	stopTrip();
+              stopTrip();
             }
         });
-	}
-	
-	/**========================================================================
-	 * public void stopTrip()
-	 * ------------------------------------------------------------------------
-	 */
-	public void stopTrip() {
-		// Update button label
-		Button tripButton = (Button)findViewById(R.id.record_trip);
-		tripButton.setText("Start trip");
-		
-		// Register for updates
-		locationManager.requestLocationUpdates(locationProvider, 0, 0, new StopTripListener());
-			    
-		// Change button's functionality
+  }
+  
+  /**========================================================================
+   * public void stopTrip()
+   * ------------------------------------------------------------------------
+   */
+  public void stopTrip() {
+    // Update button label
+    Button tripButton = (Button)findViewById(R.id.record_trip);
+    tripButton.setText("Start trip");
+    
+    // Register for updates
+    locationManager.requestLocationUpdates(locationProvider, 0, 0, new StopTripListener());
+          
+    // Change button's functionality
         tripButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-            	startTrip();
+              startTrip();
             }
         });
 
-	}
-	
-	/**========================================================================
-	 * private void logTrip()
-	 * ------------------------------------------------------------------------
-	 */
-	private void logTrip(Trip trip, String filename) {
-		
-		LogFile log = new LogFile(filename, true);
+  }
+  
+  /**========================================================================
+   * private void logTrip()
+   * ------------------------------------------------------------------------
+   */
+  private void logTrip(Trip trip, String filename) {
+    
+    LogFile log = new LogFile(filename, true);
 
-		log.write(String.format("%f %f %f %f %d", trip.getOrigin().getLatitude(), trip.getOrigin().getLongitude(),
-					                              trip.getDestination().getLatitude(), trip.getDestination().getLongitude(),
-					                              trip.getElapsedTime()));
-		log = null;
-	}
-	
-	/******************************************************************************
-	* public class StartTripListener
-	*------------------------------------------------------------------------------
-	*/
-	private class StartTripListener implements LocationListener {
+    log.write(String.format("%f %f %f %f %d", trip.getOrigin().getLatitude(), trip.getOrigin().getLongitude(),
+                                        trip.getDestination().getLatitude(), trip.getDestination().getLongitude(),
+                                        trip.getElapsedTime()));
+    log = null;
+  }
+  
+  /******************************************************************************
+  * public class StartTripListener
+  *------------------------------------------------------------------------------
+  */
+  private class StartTripListener implements LocationListener {
 
-		@Override
-		public void onLocationChanged(Location location) {
-			// Record location value
-			tempTrip = new Trip(null, null);
-			tempTrip.setOrigin(location);
-			
-			// Update text values
-    		TextView originValue = (TextView)findViewById(R.id.origin_value);
-    		originValue.setText(location.getLongitude() + " " + location.getLatitude());
-    		
-    		// Unregister self
-    		locationManager.removeUpdates(this);
-		}
+    @Override
+    public void onLocationChanged(Location location) {
+      // Record location value
+      tempTrip = new Trip(null, null);
+      tempTrip.setOrigin(location);
+      
+      // Update text values
+        TextView originValue = (TextView)findViewById(R.id.origin_value);
+        originValue.setText(location.getLongitude() + " " + location.getLatitude());
+        
+        // Unregister self
+        locationManager.removeUpdates(this);
+    }
 
-		@Override
-		public void onProviderDisabled(String provider) {
-			// TODO Auto-generated method stub	
-		}
+    @Override
+    public void onProviderDisabled(String provider) {
+      // TODO Auto-generated method stub  
+    }
 
-		@Override
-		public void onProviderEnabled(String provider) {
-			// TODO Auto-generated method stub
-		}
+    @Override
+    public void onProviderEnabled(String provider) {
+      // TODO Auto-generated method stub
+    }
 
-		@Override
-		public void onStatusChanged(String provider, int status, Bundle extras) {
-			// TODO Auto-generated method stub
-		}
-	}
-	
-	/******************************************************************************
-	* public class StopTripListener
-	*------------------------------------------------------------------------------
-	*/
-	private class StopTripListener implements LocationListener {
+    @Override
+    public void onStatusChanged(String provider, int status, Bundle extras) {
+      // TODO Auto-generated method stub
+    }
+  }
+  
+  /******************************************************************************
+  * public class StopTripListener
+  *------------------------------------------------------------------------------
+  */
+  private class StopTripListener implements LocationListener {
 
-		@Override
-		public void onLocationChanged(Location location) {
-			// Record location value
-			tempTrip.setDestination(location);
+    @Override
+    public void onLocationChanged(Location location) {
+      // Record location value
+      tempTrip.setDestination(location);
 
-			// Update text values
-    		TextView destinationValue = (TextView)findViewById(R.id.destination_value);
-    		destinationValue.setText(location.getLongitude() + " " + location.getLatitude());
+      // Update text values
+        TextView destinationValue = (TextView)findViewById(R.id.destination_value);
+        destinationValue.setText(location.getLongitude() + " " + location.getLatitude());
 
-    		// Log trip
-    		logTrip(tempTrip, tripLog);
+        // Log trip
+        logTrip(tempTrip, tripLog);
  
-    		// Unregister self
-    		locationManager.removeUpdates(this);
-		}
+        // Unregister self
+        locationManager.removeUpdates(this);
+    }
 
-		@Override
-		public void onProviderDisabled(String provider) {
-			
-		}
+    @Override
+    public void onProviderDisabled(String provider) {
+      
+    }
 
-		@Override
-		public void onProviderEnabled(String provider) {
-			
-		}
+    @Override
+    public void onProviderEnabled(String provider) {
+      
+    }
 
-		@Override
-		public void onStatusChanged(String provider, int status, Bundle extras) {
-			
-		}
-	}
+    @Override
+    public void onStatusChanged(String provider, int status, Bundle extras) {
+      
+    }
+  }
 }
